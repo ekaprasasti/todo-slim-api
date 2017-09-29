@@ -84,15 +84,29 @@ class TodoController
 
 	public function deleteTask(Request $request, Response $response, $id)
 	{
-		TodoQuery::create()->filterById($id)->delete();
+		$todo = new TodoQuery();
+		$todoDetail = $todo->findPk($id);
+		
+		if ($todoDetail == null) {
+			$responseData = [
+				'success' => false,
+				'error_code' => 404,
+				'message' => 'id '.$id.' not found'
+			];
 
-		$responseData = [
-			'success' => true,
-			'message' => 'delete by id '.$id.'.',
-			'data' => null
-		];
+			return $response->withJson($responseData, 404);
+		}
+		else {
+			TodoQuery::create()->filterById($id)->delete();
 
-		return $response->withJson($responseData, 200);
+			$responseData = [
+				'success' => true,
+				'message' => 'delete by id '.$id.'.',
+				'data' => null
+			];
+
+			return $response->withJson($responseData, 200);
+		}
 	}
 
 	public function statusTask(Request $request, Response $response, $id)
@@ -103,21 +117,35 @@ class TodoController
 
 		$validator = new Validator($request, $ruleset);
         $validator->validate();
+		
+		$todo = new TodoQuery();
+		$todoDetail = $todo->findPk($id);
+		
+		if ($todoDetail == null) {
+			$responseData = [
+				'success' => false,
+				'error_code' => 404,
+				'message' => 'id '.$id.' not found'
+			];
 
-        $params = $request->getParsedBody();
-		$status = $params['status'];
+			return $response->withJson($responseData, 404);
+		}
+		else {
+			$params = $request->getParsedBody();
+			$status = $params['status'];
 
-		$task = TodoQuery::create()->findOneById($id);
-		$task->setStatus($status);
-		$task->save();
+			$task = TodoQuery::create()->findOneById($id);
+			$task->setStatus($status);
+			$task->save();
 
-		$responseData = [
-			'success' => true,
-            'message' => 'status change to '.$status.'.',
-            'data' => null
-        ];
+			$responseData = [
+				'success' => true,
+            	'message' => 'status change to '.$status.'.',
+            	'data' => null
+        	];
 
-        return $response->withJson($responseData, 200);
+        	return $response->withJson($responseData, 200);	
+		}
 	}
 
 	public function editTask(Request $request, Response $response, $id)
@@ -131,23 +159,37 @@ class TodoController
         $validator = new Validator($request, $ruleset);
         $validator->validate();
 
-        $params = $request->getParsedBody();
-        $task = $params['task'];
-        $description = $params['description'];
-        $date = $params['date'];
+		$todo = new TodoQuery();
+		$todoDetail = $todo->findPk($id);
 
-		$taskEdit = TodoQuery::create()->findOneById($id);
-        $taskEdit->setTask($task);
-		$taskEdit->setDescription($description);
-		$taskEdit->setDate($date);
-        $taskEdit->save();	
+		if ($todoDetail == null) {
+			$responseData = [
+				'success' => false,
+				'error_code' => 404,
+				'message' => 'id '.$id.' not found'
+			];
 
-        $responseData = [
-            'success' => true,
-            'message' => 'edit task success',
-            'data' => null
-        ];
+			return $response->withJson($responseData, 404);
+		}
+		else {
+        	$params = $request->getParsedBody();
+        	$task = $params['task'];
+        	$description = $params['description'];
+        	$date = $params['date'];
 
-        return $response->withJson($responseData, 200);	
+			$taskEdit = TodoQuery::create()->findOneById($id);
+        	$taskEdit->setTask($task);
+			$taskEdit->setDescription($description);
+			$taskEdit->setDate($date);
+        	$taskEdit->save();	
+
+        	$responseData = [
+            	'success' => true,
+            	'message' => 'edit task success',
+            	'data' => null
+        	];
+
+        	return $response->withJson($responseData, 200);	
+		}
 	}
 }
