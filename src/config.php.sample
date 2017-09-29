@@ -1,0 +1,36 @@
+<?php
+
+return [
+
+    // Framework Settings
+    'settings.httpVersion' => '1.1',
+    'settings.responseChunkSize' => 4096,
+    'settings.outputBuffering' => 'append',
+    'settings.determineRouteBeforeAppMiddleware' => false,
+    'settings.displayErrorDetails' => false,
+    'settings.addContentLengthHeader' => true,
+    'settings.routerCacheFile' => false,
+
+    // Mail settings
+    'settings.mail.host' => 'localhost',
+    'settings.mail.port' => 25,
+    'settings.mail.enableAuth' => true,
+    'settings.mail.username' => 'mail@example.com',
+    'settings.mail.password' => 's3cr3t',
+    'settings.mail.sender' => 'no-reply@example.com',
+
+    // DB Settings
+    'settings.db.host' => 'localhost',
+    'settings.db.port' => '3306',
+    'settings.db.user' => 'db_user',
+    'settings.db.password' => 's3cr3t',
+    'settings.db.database' => 'db_name',
+
+    // Social login
+    'settings.google.web.clientId' => '392223742967-d1ha3xxx.apps.googleusercontent.com',
+    'settings.google.ios.clientId' => '392223742967-auqrvxxx.apps.googleusercontent.com',
+    'settings.google.android.clientId' => '392223742967-vj98lxxx.apps.googleusercontent.com',
+    'settings.facebook.appId' => '10603xxx',
+    'settings.facebook.appSecret' => '54e8843xxx',
+    'settings.fcm.serverKey' => 'AAAAW1JbW_c:APA91bFTnHTsUHxxx9GbUyRK_o1la'
+];

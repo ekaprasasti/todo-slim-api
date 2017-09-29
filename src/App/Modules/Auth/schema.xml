@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="freedom" defaultIdMethod="native" identifierQuoting="true">
+    <table name="users" phpName="User" namespace="App\Modules\Auth\Model">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="uuid" type="varchar" size="36" required="true" />
+        <column name="email" type="varchar" size="50" required="true" />
+        <column name="password" type="char" size="60" required="true" />
+        <column name="last_login" type="timestamp" />
+        <behavior name="timestampable" />
+        <unique name="unique_users_email">
+            <unique-column name="email" />
+        </unique>
+    </table>
+    <table name="reset_tokens" phpName="ResetToken" namespace="App\Modules\Auth\Model">
+        <column name="email" type="varchar" size="50" required="true" primaryKey="true" />
+        <column name="token" type="char" size="6" required="true" primaryKey="true" />
+        <column name="expired_at" type="timestamp" required="true" />
+    </table>
+</database>

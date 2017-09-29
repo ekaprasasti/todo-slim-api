@@ -1,0 +1,9 @@
+/tmp/
+/vendor/
+/generated-classes/*
+/generated-sql/*
+/generated-migrations/*
+/logs/*
+/src/config.php
+!/logs/README.md
+.vscode/

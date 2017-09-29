@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="freedom" defaultIdMethod="native" identifierQuoting="true">
+    <table name="message_queue" phpName="MessageQueue" namespace="App\Core\Model">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="destination" type="varchar" size="255" required="true" />
+        <column name="message" type="varchar" size="255" required="true" />
+        <column name="timestamp" type="timestamp" required="true" />
+    </table>
+</database>

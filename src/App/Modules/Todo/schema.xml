@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database name="freedom" defaultIdMethod="native" identifierQuoting="true">
+    <table name="todo" phpName="Todo" namespace="App\Modules\Todo\Model">
+        <column name="id" type="integer" required="true" primaryKey="true" autoIncrement="true" />
+        <column name="task" type="varchar" size="50" required="true" />
+        <column name="description" type="varchar" size="255" required="true" />
+		<column name="date" type="timestamp"  />
+		<column name="status" type="varchar" size="50" />
+        <behavior name="timestampable" />
+    </table>
+</database>

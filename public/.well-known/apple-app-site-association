@@ -1,0 +1,11 @@
+{
+    "applinks": {
+        "apps": [ ],
+        "details": [
+            {
+                "appID": "FS25K54Z55.com.bi.starterkit",
+                "paths": [ "/freedom/auth/reset_password"]
+            }
+        ]
+    }
+}

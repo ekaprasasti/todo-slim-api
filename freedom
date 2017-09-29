@@ -1,0 +1,114 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ * Copy a file, or recursively copy a folder and its contents
+ * @author      Aidan Lister <aidan@php.net>
+ * @version     1.0.1
+ * @link        http://aidanlister.com/2004/04/recursively-copying-directories-in-php/
+ * @param       string   $source    Source path
+ * @param       string   $dest      Destination path
+ * @param       int      $permissions New folder creation permissions
+ * @return      bool     Returns true on success, false on failure
+ */
+function xcopy($source, $dest, $permissions = 0755)
+{
+    // Check for symlinks
+    if (is_link($source)) {
+        return symlink(readlink($source), $dest);
+    }
+
+    // Simple copy for a file
+    if (is_file($source)) {
+        return copy($source, $dest);
+    }
+
+    // Make destination directory
+    if (!is_dir($dest)) {
+        mkdir($dest, $permissions);
+    }
+
+    // Loop through the folder
+    $dir = dir($source);
+    while (false !== $entry = $dir->read()) {
+        // Skip pointers
+        if ($entry == '.' || $entry == '..') {
+            continue;
+        }
+
+        // Deep copy directories
+        xcopy("$source/$entry", "$dest/$entry", $permissions);
+    }
+
+    // Clean up
+    $dir->close();
+    return true;
+}
+
+$command = $argv[1];
+if($command !== 'migrate') {
+    return 0;
+}
+
+if(!file_exists(__DIR__ . '/tmp')) {
+    mkdir(__DIR__ . '/tmp', 0755, true);
+}
+
+copy(__DIR__ . '/src/App/Core/schema.xml', __DIR__ . '/tmp/core.schema.xml');
+
+$modulesDir = __DIR__ . '/src/App/Modules/';
+$files = scandir($modulesDir);
+foreach($files as $key => $value) {
+    if($value == '.' || $value == '..') {
+        continue;
+    }
+
+    $fullpath = $modulesDir . '/' . $value;
+
+    if(!is_dir($fullpath)) {
+        continue;
+    }
+
+    if(!is_file($fullpath . '/schema.xml')) {
+        continue;
+    }
+
+    $source = $fullpath . '/schema.xml';
+    $destination = __DIR__ . '/tmp/' . $value . '.schema.xml';
+    if(!copy($source, $destination)) {
+        echo "Failed to copy schema.xml file!";
+        return 0;
+    }
+}
+
+print "[Freedom:migrate] Generating database models... \n";
+exec('"'.__DIR__ . '/vendor/bin/propel" model:build --schema-dir tmp/ --config-dir src/App/Core');
+
+print "[Freedom:migrate] Copying models into app modules... \n";
+xcopy(__DIR__ . '/generated-classes/App/Core/Model', __DIR__ . '/src/App/Core/Model');
+$generatedModelDir = __DIR__ . '/generated-classes/App/Modules';
+$files = scandir($generatedModelDir);
+foreach($files as $key => $value) {
+    if($value == '.' || $value == '..') {
+        continue;
+    }
+
+    $src = $generatedModelDir . '/' . $value . '/Model';
+    $dest = __DIR__ . '/src/App/Modules/' . $value . '/Model';
+    if(!file_exists($dest)) {
+        mkdir($dest);
+    }
+    xcopy(realpath($src), realpath($dest));
+}
+
+print "[Freedom:migrate] Migrating models into databse...\n";
+exec('"'.__DIR__ . '/vendor/bin/propel" diff --schema-dir tmp/ --config-dir src/App/Core');
+exec('"'.__DIR__ . '/vendor/bin/propel" migrate --config-dir src/App/Core');
+
+print "[Freedom:migrate] Cleaning up...\n";
+exec('rm -rf "' . __DIR__ . '/generated-classes"');
+exec('rm -rf "' . __DIR__ . '/generated-migrations"');
+exec('rm -rf "' . __DIR__ . '/generated-sql"');
+exec('rm -rf "' . __DIR__ . '/tmp"');
+exec('composer dump-autoload');
+print "[Freedom:migrate] FINISH!";

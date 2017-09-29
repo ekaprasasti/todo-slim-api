@@ -1,0 +1,9 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.bi.starterkit",
+    "sha256_cert_fingerprints":
+    ["8B:83:DE:E4:3C:43:18:31:8E:E1:63:53:A2:59:86:65:1C:2A:CD:52:24:7B:DA:98:7F:7F:50:DE:B3:56:A2:9F"]
+  }
+}]
